@@ -1,4 +1,6 @@
+import 'package:blocweb/bloc/counter/counter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,32 +12,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return BlocProvider<CounterBloc>( // Dependency Injection here.
+      create: (context) => CounterBloc(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+    
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home:  MyHomePage(),
       ),
-      home:  MyHomePage(),
     );
   }
 }
 
 
-
-
-
 class MyHomePage extends StatelessWidget {
 
-  void decrement() {
-
-  }
-
-  void increment() {
-
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +47,7 @@ class MyHomePage extends StatelessWidget {
               'You have pushed the button this many times:',
             ),
             Text(
-              '0',
+              '${context.watch<CounterBloc>().state.counter}',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
@@ -64,12 +59,16 @@ class MyHomePage extends StatelessWidget {
         children: <Widget> [    
           const SizedBox(height: 8.0),  
           FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              BlocProvider.of<CounterBloc>(context).add(IncrementCounterEvent());
+            },
             tooltip: 'Increment',
             child: const Icon(Icons.add),
           ), 
-                    FloatingActionButton(
-            onPressed: () {},
+          FloatingActionButton(
+            onPressed: () {
+              context.read<CounterBloc>().add(DecrementCounterEvent());
+            },
             tooltip: 'Decrement',
             child: const Icon(Icons.remove),
           ), 
